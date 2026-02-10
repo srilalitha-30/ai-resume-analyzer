@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";   // ✅ changed (axios instance)
 import ResultCard from "../components/ResultCard";
 
 export default function Analyzer() {
@@ -24,8 +24,8 @@ export default function Analyzer() {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        "http://127.0.0.1:8000/analyze/",
+      const res = await api.post(
+        `/analyze?role=${finalRole}`,   // ✅ FIXED
         formData,
         {
           headers: {
@@ -36,12 +36,7 @@ export default function Analyzer() {
 
       const data = res.data;
 
-      // 🔥 CRITICAL FIX
-      // OLD (wrong):
-      // setResult(res.data);
-
-      // NEW (correct):
-      setResult(data.analysis);
+      setResult(data.analysis);   // ✅ unchanged logic
 
     } catch (error) {
       console.error("API Error:", error);
@@ -55,7 +50,7 @@ export default function Analyzer() {
           }`
         );
       } else {
-        alert("Cannot reach backend. Make sure it is running on port 8000.");
+        alert("Cannot reach backend. Server not responding.");
       }
     } finally {
       setLoading(false);

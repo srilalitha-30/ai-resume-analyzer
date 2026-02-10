@@ -4,14 +4,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from app.routes.analyze import router as analyze_router
 import os
-import uvicorn
 
-app = FastAPI(title="AI Resume Analyzer")
+app = FastAPI(title="AI Resume Analyzer API")
 
-# API routes
-app.include_router(analyze_router, prefix="/api", tags=["Analyzer"])
-
-# CORS (safe even if not needed later)
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,15 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Serve frontend build
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+# API routes
+app.include_router(analyze_router, prefix="/api/analyze", tags=["Analyzer"])
 
-app.mount("/", StaticFiles(directory=STATIC_DIR, html=True), name="static")
+# Serve frontend
+FRONTEND_PATH = os.path.join(os.path.dirname(__file__), "..", "frontend")
+
+app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_PATH, "static")), name="static")
 
 @app.get("/")
 def serve_frontend():
-    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
+    return FileResponse(os.path.join(FRONTEND_PATH, "index.html"))

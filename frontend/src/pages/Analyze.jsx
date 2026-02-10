@@ -25,7 +25,7 @@ export default function Analyzer() {
       setLoading(true);
 
       const res = await api.post(
-  `/api/analyze`,
+  "/api/analyze",
   formData,
   {
     headers: {

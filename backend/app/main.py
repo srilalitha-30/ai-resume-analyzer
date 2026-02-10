@@ -19,11 +19,15 @@ app.add_middleware(
 # API routes
 app.include_router(analyze_router, prefix="/api/analyze", tags=["Analyzer"])
 
-# Serve frontend
-FRONTEND_PATH = os.path.join(os.path.dirname(__file__), "..", "frontend")
+# ---------- FRONTEND SERVING ----------
 
-app.mount("/static", StaticFiles(directory=os.path.join(FRONTEND_PATH, "static")), name="static")
+BASE_DIR = os.path.dirname(__file__)
+FRONTEND_PATH = os.path.join(BASE_DIR, "..", "frontend")
 
+# Serve ALL frontend files (images, js, css, assets)
+app.mount("/assets", StaticFiles(directory=FRONTEND_PATH), name="assets")
+
+# React entry point
 @app.get("/")
 def serve_frontend():
     return FileResponse(os.path.join(FRONTEND_PATH, "index.html"))

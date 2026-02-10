@@ -25,14 +25,14 @@ export default function Analyzer() {
       setLoading(true);
 
       const res = await api.post(
-        `/analyze?role=${finalRole}`,   // ✅ FIXED
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+  `/api/analyze`,
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  }
+);
 
       const data = res.data;
 

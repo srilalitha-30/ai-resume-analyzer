@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from app.routes.analyze import router as analyze_router
 import os
 
-app = FastAPI(title="AI Resume Analyzer API")
+app = FastAPI(title="AI Resume Analyzer")
 
 # CORS
 app.add_middleware(
@@ -19,15 +19,14 @@ app.add_middleware(
 # API routes
 app.include_router(analyze_router, prefix="/api/analyze", tags=["Analyzer"])
 
-# ---------- FRONTEND SERVING ----------
+# ---- FRONTEND SERVING ----
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
 
-BASE_DIR = os.path.dirname(__file__)
-FRONTEND_PATH = os.path.join(BASE_DIR, "..", "frontend")
+# Serve static assets (JS, CSS, images)
+app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
-# Serve ALL frontend files (images, js, css, assets)
-app.mount("/assets", StaticFiles(directory=FRONTEND_PATH), name="assets")
-
-# React entry point
+# Root
 @app.get("/")
-def serve_frontend():
-    return FileResponse(os.path.join(FRONTEND_PATH, "index.html"))
+async def root():
+    return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))

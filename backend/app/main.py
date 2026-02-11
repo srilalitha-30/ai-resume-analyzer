@@ -23,7 +23,7 @@ app.include_router(analyze_router, prefix="/api/analyze", tags=["Analyzer"])
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 🔥 CHANGE THIS to your build folder
-FRONTEND_BUILD_DIR = os.path.join(BASE_DIR, "..", "frontend", "dist")  
+FRONTEND_BUILD_DIR = os.path.join(BASE_DIR, "..", "frontend", "build")  
 # OR "build" depending on your setup
 
 # Serve static assets

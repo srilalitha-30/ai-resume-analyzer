@@ -7,7 +7,7 @@ import os
 
 app = FastAPI(title="AI Resume Analyzer")
 
-# CORS
+# CORS (optional now, but safe)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,17 +16,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API routes
+# ✅ API routes FIRST
 app.include_router(analyze_router, prefix="/api/analyze", tags=["Analyzer"])
 
 # ---- FRONTEND SERVING ----
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
 
-# Serve static assets (JS, CSS, images)
-app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+# ✅ mount frontend on /app, NOT /
+app.mount("/app", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
-# Root
+# Root -> frontend index
 @app.get("/")
 async def root():
     return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))

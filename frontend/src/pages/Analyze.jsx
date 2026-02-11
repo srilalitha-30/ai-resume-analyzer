@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api";   // ✅ changed (axios instance)
+import api from "../api";   // axios instance
 import ResultCard from "../components/ResultCard";
 
 export default function Analyzer() {
@@ -24,13 +24,13 @@ export default function Analyzer() {
     try {
       setLoading(true);
 
-      const res = await axios.post(`/analyze`, formData, {
-  headers: { "Content-Type": "multipart/form-data" },
-});
+      // ✅ fixed API call
+      const res = await api.post("/api/analyze", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       const data = res.data;
-
-      setResult(data.analysis);   // ✅ unchanged logic
+      setResult(data.analysis);
 
     } catch (error) {
       console.error("API Error:", error);

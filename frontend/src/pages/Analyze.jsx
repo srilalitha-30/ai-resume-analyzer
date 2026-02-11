@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api";   // axios instance
+import api from "../services/api";   // axios instance
 import ResultCard from "../components/ResultCard";
 
 export default function Analyzer() {

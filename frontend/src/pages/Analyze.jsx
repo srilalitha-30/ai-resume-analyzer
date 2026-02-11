@@ -24,15 +24,9 @@ export default function Analyzer() {
     try {
       setLoading(true);
 
-      const res = await api.post(
-  "/api/analyze",
-  formData,
-  {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  }
-);
+      const res = await axios.post(`/analyze`, formData, {
+  headers: { "Content-Type": "multipart/form-data" },
+});
 
       const data = res.data;
 

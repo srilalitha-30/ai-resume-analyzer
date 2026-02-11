@@ -7,7 +7,7 @@ import os
 
 app = FastAPI(title="AI Resume Analyzer")
 
-# CORS
+# ---------------- CORS ----------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,20 +16,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# API routes
+# ---------------- API ROUTES ----------------
 app.include_router(analyze_router, prefix="/api/analyze", tags=["Analyzer"])
 
-# ---- FRONTEND SERVING ----
+# ---------------- FRONTEND SERVING ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# 🔥 CHANGE THIS to your build folder
-FRONTEND_BUILD_DIR = os.path.join(BASE_DIR, "..", "frontend", "build")  
-# OR "build" depending on your setup
+# Absolute path to frontend/build
+# backend/app/main.py  -> go up 2 levels -> project root -> frontend/build
+FRONTEND_BUILD_DIR = os.path.abspath(
+    os.path.join(BASE_DIR, "..", "..", "frontend", "build")
+)
 
-# Serve static assets
-app.mount("/static", StaticFiles(directory=FRONTEND_BUILD_DIR), name="static")
+# Serve frontend only if build exists (prevents Render crash)
+if os.path.exists(FRONTEND_BUILD_DIR):
 
-# Serve frontend index
-@app.get("/")
-async def serve_frontend():
-    return FileResponse(os.path.join(FRONTEND_BUILD_DIR, "index.html"))
+    # Serve static assets
+    app.mount(
+        "/static",
+        StaticFiles(directory=os.path.join(FRONTEND_BUILD_DIR, "static")),
+        name="static"
+    )
+
+    # Serve React app
+    @app.get("/")
+    async def serve_frontend():
+        return FileResponse(os.path.join(FRONTEND_BUILD_DIR, "index.html"))
+
+else:
+    # Fallback (backend-only mode, no crash)
+    @app.get("/")
+    async def serve_backend_only():
+        return {
+            "status": "Backend running",
+            "error": "Frontend build folder not found",
+            "expected_path": FRONTEND_BUILD_DIR
+        }
